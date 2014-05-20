@@ -17,7 +17,7 @@ module Score
     end
 
     def sum(scores)
-      scores.reduce(:+)
+      scores.map {|s| Integer(s)}.reduce(:+)
     end
 
     def to_i

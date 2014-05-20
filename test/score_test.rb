@@ -34,6 +34,7 @@ module Score
 
     def test_sum
       assert_equal 10, @score.sum([5, 5])
+      assert_raises(ArgumentError) { @score.sum(["not_an_integer"]) }
     end
 
     def test_initialize
