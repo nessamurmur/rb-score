@@ -2,17 +2,30 @@ require 'json'
 require 'open-uri'
 
 module Score
-
   class Score
     attr_reader :score
 
-    def initialize(url="https://github.com/databyte.json")
-      json = JSON.load(open(url))
-      @score = json.reduce(0) { |sum, j| sum + score_map.fetch(j["type"], 1) }
+    EVENTS = [
+              "PushEvent",
+              "PullRequestReviewCommentEvent",
+              "WatchEvent",
+              "CreateEvent",
+             ]
+
+    def initialize(json)
+      @score = sum(scores(json))
     end
 
-    def to_s
-      score.to_s
+    def sum(scores)
+      scores.reduce(:+)
+    end
+
+    def to_i
+      Integer(score)
+    end
+
+    def scores(json)
+      json.map { |j| score_map.fetch(j["type"], 1) }
     end
 
     def score_map
@@ -24,5 +37,8 @@ module Score
       }
     end
 
+    def self.get_json(url="https://github.com/databyte.json")
+      JSON.load(open(url))
+    end
   end
 end
